@@ -56,6 +56,8 @@ cc_library(
         "//tensorflow_serving/servables/tensorflow:saved_model_bundle_source_adapter_proto",
         "//tensorflow_serving/servables/tensorflow:session_bundle_config_proto",
         "//tensorflow_serving/servables/tensorflow:session_bundle_source_adapter_proto",
+        # for torch_source_adapter_proto
+	"//tensorflow_serving/servables/torch:torch_source_adapter_proto",
     ],
 )
 
@@ -91,6 +93,10 @@ cc_library(
         "//tensorflow_serving/util:unique_ptr_with_deps",
         "@org_tensorflow//tensorflow/core:lib",
         "@protobuf_archive//:cc_wkt_protos",
+
+	# for torch_source_adapter
+        "//tensorflow_serving/servables/torch:torch_source_adapter",
+        "//tensorflow_serving/servables/torch:torch_source_adapter_proto",
     ],
 )
 
@@ -312,6 +318,7 @@ TENSORFLOW_DEPS = [
     "//tensorflow_serving/servables/tensorflow:regression_service",
     "//tensorflow_serving/servables/tensorflow:saved_model_bundle_source_adapter",
     "//tensorflow_serving/servables/tensorflow:session_bundle_source_adapter",
+    "//tensorflow_serving/servables/torch:torch_source_adapter",
     "//tensorflow_serving/servables/tensorflow:predict_impl",
 ]
 

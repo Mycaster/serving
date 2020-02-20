@@ -48,3 +48,14 @@ def tf_serving_workspace():
         strip_prefix = "libevent-release-2.1.8-stable",
         build_file = "@//third_party/libevent:BUILD",
     )
+
+    # ===== libpytorch dependencies =====
+    http_archive(
+        name = "com_pytorch_org_libtorch",
+        urls = [
+            "http://127.0.0.1:8000/libtorch-cxx11-abi-shared-with-deps-1.4.0.zip",
+        ],
+        sha256 = "364e6caa7e41573ba67659199e301836e69f1ca19bc1f4e4b94f7f07a9551fd8",
+        strip_prefix = "libtorch",
+        build_file = "@//third_party/libtorch:BUILD",
+    )

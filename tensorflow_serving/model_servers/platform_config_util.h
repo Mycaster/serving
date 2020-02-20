@@ -29,6 +29,9 @@ namespace serving {
 PlatformConfigMap CreateTensorFlowPlatformConfigMap(
     const SessionBundleConfig& session_bundle_config, bool use_saved_model);
 
+PlatformConfigMap CreateTorchPlatformConfigMap();
+void AddPytorchToPlatformConfigMap(PlatformConfigMap &platform_config_map);
+
 }  // namespace serving
 }  // namespace tensorflow
 

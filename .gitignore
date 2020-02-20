@@ -1,3 +1,9 @@
+test-script
+*.DS_Store
+build.sh
+run.sh
+torch_models.config
+torch_source_adpter.config
 node_modules
 /bazel-bin
 /bazel-ci_build-cache
@@ -6,6 +12,7 @@ node_modules
 /bazel-serving
 /bazel-tensorflow
 /bazel-tensorflow_serving
+/bazel-tensorflow-serving
 /bazel-testlogs
 /bazel-tf
 /bazel-workspace

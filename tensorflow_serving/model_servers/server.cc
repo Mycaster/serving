@@ -261,6 +261,8 @@ Status Server::BuildAndStart(const Options& server_options) {
     }
     options.platform_config_map = CreateTensorFlowPlatformConfigMap(
         session_bundle_config, use_saved_model);
+    //support Pytorch Platform
+    //AddPytorchToPlatformConfigMap(options.platform_config_map);
   } else {
     options.platform_config_map =
         ParsePlatformConfigMap(server_options.platform_config_file);

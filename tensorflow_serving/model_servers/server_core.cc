@@ -27,12 +27,12 @@ limitations under the License.
 #include "tensorflow_serving/core/load_servables_fast.h"
 #include "tensorflow_serving/model_servers/model_platform_types.h"
 #include "tensorflow_serving/resources/resource_values.h"
-#include "tensorflow_serving/servables/tensorflow/saved_model_bundle_source_adapter.h"
-#include "tensorflow_serving/servables/tensorflow/session_bundle_source_adapter.h"
+//#include "tensorflow_serving/servables/tensorflow/saved_model_bundle_source_adapter.h"
+//#include "tensorflow_serving/servables/tensorflow/session_bundle_source_adapter.h"
 #include "tensorflow_serving/servables/tensorflow/session_bundle_source_adapter.pb.h"
 #include "tensorflow_serving/sources/storage_path/file_system_storage_path_source.h"
 #include "tensorflow_serving/sources/storage_path/file_system_storage_path_source.pb.h"
-
+#include "tensorflow_serving/servables/torch/torch_source_adapter.h"
 namespace tensorflow {
 namespace serving {
 
@@ -261,6 +261,7 @@ ServerCore::ServerCore(Options options)
   int port_num = 0;
   for (const auto& entry : options_.platform_config_map.platform_configs()) {
     const string& platform = entry.first;
+    VLOG(0) << "adding platform: "<< platform << " to platform_to_router_port_";
     platform_to_router_port_[platform] = port_num++;
   }
 }
@@ -532,12 +533,14 @@ Status ServerCore::UpdateModelVersionLabelMap() {
 Status ServerCore::CreateAdapter(
     const string& model_platform,
     std::unique_ptr<StoragePathSourceAdapter>* adapter) const {
+  VLOG(0) << "CreateAdapter for model_platform: " << model_platform;
   auto config_it =
       options_.platform_config_map.platform_configs().find(model_platform);
   if (config_it == options_.platform_config_map.platform_configs().end()) {
     return errors::FailedPrecondition(strings::StrCat(
         "PlatformConfigMap has no entry for platform ", model_platform));
   }
+  TorchSourceAdapter tadapter;
   const ::google::protobuf::Any& adapter_config =
       config_it->second.source_adapter_config();
   const tensorflow::Status status =

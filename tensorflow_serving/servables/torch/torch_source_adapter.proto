@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+
+// Config proto for PytorchSourceAdapter.
+message TorchSourceAdapterConfig {
+    int64 version = 1;
+}
+
