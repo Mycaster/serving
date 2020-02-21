@@ -33,6 +33,7 @@ cc_library(
         "//tensorflow_serving/core:storage_path",
         "@com_pytorch_org_libtorch//:libtorch",
     ],
+    alwayslink = 1,
 )
 
 load("//tensorflow_serving:serving.bzl", "serving_proto_library")

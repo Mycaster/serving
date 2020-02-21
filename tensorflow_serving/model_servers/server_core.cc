@@ -540,7 +540,6 @@ Status ServerCore::CreateAdapter(
     return errors::FailedPrecondition(strings::StrCat(
         "PlatformConfigMap has no entry for platform ", model_platform));
   }
-  TorchSourceAdapter tadapter;
   const ::google::protobuf::Any& adapter_config =
       config_it->second.source_adapter_config();
   const tensorflow::Status status =
