@@ -203,7 +203,7 @@ class ClassRegistrationFactory
           " does not match expected type ", config_descriptor_->full_name());
     }
     // SourceAdapterCreator
-    VLOG(0) << "TypeOf ClassCreator: " << typeid(Class).name();
+    LOG(INFO) << "TypeOf ClassCreator: " << typeid(Class).name();
     return Class::Create(static_cast<const Config&>(config),
                          std::forward<AdditionalFactoryArgs>(args)..., result);
   }
@@ -233,7 +233,6 @@ class ClassRegistry {
                        std::unique_ptr<BaseClass>* result) {
     const string& config_proto_message_type =
         config.GetDescriptor()->full_name();
-    VLOG(0) << "config_proto_message_type: " << config_proto_message_type;
     auto* factory = LookupFromMap(config_proto_message_type);
     if (factory == nullptr) {
       return errors::InvalidArgument(
@@ -259,7 +258,7 @@ class ClassRegistry {
     if (!parse_status.ok()) {
       return parse_status;
     }
-    VLOG(0) << "full_type_name: " << full_type_name<< " type_url: " << any_config.type_url(); 
+    LOG(INFO) << "full_type_name: " << full_type_name<< " type_url: " << any_config.type_url(); 
     const protobuf::Descriptor* descriptor =
         protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(
             full_type_name);
@@ -293,7 +292,7 @@ class ClassRegistry {
   // Inserts a key/value pair into the factory map.
   static void InsertIntoMap(const string& config_proto_message_type,
                             FactoryType* factory) {
-    VLOG(0) << "Insert " << config_proto_message_type << " Into Map";
+    LOG(INFO) << "Insert " << config_proto_message_type << " Into Map";
     LockableFactoryMap* global_map = GlobalFactoryMap();
     {
       mutex_lock lock(global_map->mu);

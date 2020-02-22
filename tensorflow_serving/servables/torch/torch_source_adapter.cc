@@ -13,20 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "tensorflow_serving/servables/torch/torch_source_adapter.h"
 
 #include <stddef.h>
 #include <memory>
 #include <vector>
 
+#include "torch/script.h"
 #include "tensorflow/core/lib/core/errors.h"
 #include "tensorflow/core/lib/core/status.h"
 #include "tensorflow/core/lib/io/inputbuffer.h"
 #include "tensorflow/core/lib/strings/str_util.h"
 #include "tensorflow/core/platform/env.h"
 #include "tensorflow/core/platform/types.h"
-#include "torch/torch.h"
-#include "torch/script.h"
+#include "tensorflow/core/platform/logging.h"
+#include "tensorflow_serving/servables/torch/torch_source_adapter.h"
 
 namespace tensorflow {
 namespace serving {
@@ -50,9 +50,9 @@ TorchSourceAdapter::~TorchSourceAdapter() { Detach(); }
 Status TorchSourceAdapter::Convert(const StoragePath& path,
                                 std::unique_ptr<Loader>* loader) {
   auto servable_creator = [path](std::unique_ptr<TorchBundle>* bundle) {
-    VLOG(0) << "path: " << path;
+    LOG(INFO) << "path: " << path;
     torch::Tensor tensor = torch::eye(3);
-    VLOG(0) << tensor;
+    LOG(INFO) << tensor;
     ///* test module
     torch::jit::script::Module module;
     try {
@@ -60,15 +60,15 @@ Status TorchSourceAdapter::Convert(const StoragePath& path,
       module = torch::jit::load("/libtorch/torch-models/resnet/1/traced_resnet_model.pt");
     }
     catch (const c10::Error& e) {
-      VLOG(0) << "error loading the model";
+      LOG(ERROR) << "error loading the model";
       return errors::Internal("error loading the model");
     }
-    VLOG(0) << "ok";
+    LOG(INFO) << "ok";
     std::vector<torch::jit::IValue> inputs;
     inputs.push_back(torch::ones({1, 3, 224, 224}));
     // Execute the model and turn its output into a tensor.
     at::Tensor output = module.forward(inputs).toTensor();
-    VLOG(0) << output.slice(1, 0, 5) << '\n';
+    LOG(INFO) << output.slice(1, 0, 5) << '\n';
     //*/
 
     // TorchModule module = torch::jit::load(path);
@@ -89,7 +89,7 @@ class TorchSourceAdapterCreator {
       const TorchSourceAdapterConfig& config,
       std::unique_ptr<SourceAdapter<StoragePath, std::unique_ptr<Loader>>>*
           adapter) {
-    VLOG(0) << "TorchSourceAdapterCreator Create TorchSourceAdapter";
+    LOG(INFO) << "TorchSourceAdapterCreator Create TorchSourceAdapter";
     adapter->reset(new TorchSourceAdapter());
     return Status::OK();
   }

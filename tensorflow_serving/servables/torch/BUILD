@@ -50,6 +50,10 @@ cc_binary(
     srcs = ["torch_module_test.cc"],
     deps = [
         "@com_pytorch_org_libtorch//:libtorch",
+        "@org_tensorflow//tensorflow/core:tensorflow",
+        "@org_tensorflow//tensorflow/core:lib",
+
     ],
+    linkopts = ["-lpthread"],
     copts = ["-D_GLIBCXX_USE_CXX11_ABI=1"],
 )

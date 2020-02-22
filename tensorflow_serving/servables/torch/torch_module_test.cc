@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <memory>
-
+//#include "tensorflow/core/platform/logging.h"
 int main(int argc, const char* argv[]) {
   if (argc != 2) {
     std::cerr << "usage: example-app <path-to-exported-script-module>\n";
@@ -21,7 +21,8 @@ int main(int argc, const char* argv[]) {
   }
 
   std::cout << "ok\n";
-
+  LOG(INFO) << "OK"; 
+  VLOG(0) << "OK"; 
 
   std::vector<torch::jit::IValue> inputs;
   inputs.push_back(torch::ones({1, 3, 224, 224}));
