@@ -1,9 +1,5 @@
-test-script
 *.DS_Store
-build.sh
-run.sh
-torch_models.config
-torch_source_adpter.config
+.vscode
 node_modules
 /bazel-bin
 /bazel-ci_build-cache
