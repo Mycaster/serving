@@ -24,7 +24,7 @@ inline const torch::Dtype tensorflowDtypeToTorchDtype(tensorflow::DataType dtype
     TYPE_CONVERT_CASE(tensorflow::DT_FLOAT, torch::kFloat32)
     TYPE_CONVERT_CASE(tensorflow::DT_DOUBLE, torch::kFloat64)
     default:
-      return torch::kFloat32;
+      return at::ScalarType::Undefined;
   }
 }
 
@@ -39,7 +39,7 @@ inline const tensorflow::DataType TorchDtypeTotensorflowDtype(torch::Dtype dtype
     TYPE_CONVERT_CASE(torch::kFloat32, tensorflow::DT_FLOAT)
     TYPE_CONVERT_CASE(torch::kFloat64, tensorflow::DT_DOUBLE)
     default:
-      return tensorflow::DT_FLOAT;
+      return tensorflow::DT_INVALID;
   }
 }
 

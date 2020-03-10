@@ -165,11 +165,16 @@ bool torchTensorFromProto(torch::Tensor * tensor, const tensorflow::TensorProto 
   int64 N = 0;
   std::vector<int64_t> shapeVec;
   if (!tensorshapeFromProto(&N, &shapeVec, proto.tensor_shape())){
+    LOG(ERROR) << "tensorshapeFromProto error";
     return false;
   }
   at::IntArrayRef shape(shapeVec);
   // 2. convert dataType
   const torch::Dtype dtype = tensorflowDtypeToTorchDtype(proto.dtype());
+  if (dtype == at::ScalarType::Undefined){
+    LOG(ERROR) << "tensorflowDtypeToTorchDtype error, tfDtype: " << proto.dtype();
+    return false;
+  }
   torch::TensorOptions option(dtype);
   // 3. convert tensorData
   void* data = nullptr;
@@ -180,7 +185,6 @@ bool torchTensorFromProto(torch::Tensor * tensor, const tensorflow::TensorProto 
       CASES_DECODE(dtype, data = DecodeFromProtoField<T>(proto, N));
     }
     if (data == nullptr) return false;
-    LOG(INFO) << "convert tensorProto ok";
   }
   CASES_DECODE(dtype, *tensor = torch::from_blob(data, shape, deleter<T>, option));
   return true;
@@ -202,9 +206,14 @@ bool tensorshapeToProto(const at::IntArrayRef &shape, TensorShapeProto* proto){
 bool torchTensorToProto(const torch::Tensor *tensor, tensorflow::TensorProto* proto){
   proto->Clear();
   if (!tensorshapeToProto(tensor->sizes(), proto->mutable_tensor_shape())){
+    LOG(ERROR) << "tensorshapeToProto failed";
     return false;
   }
   tensorflow::DataType dtype = TorchDtypeTotensorflowDtype(tensor->scalar_type());
+  if (dtype == tensorflow::DT_INVALID){
+    LOG(ERROR) << "TorchDtypeTotensorflowDtype failed, torchDtype: " << tensor->scalar_type();
+    return false;
+  }
   proto->set_dtype(dtype);
   if (tensor->data_ptr()) {
      CASES_DECODE(tensor->scalar_type(), EncodeToProtoField<T>(tensor->data_ptr<T>(), tensor->numel(), proto));
