@@ -30,25 +30,32 @@ Status RunTorchPredict(TorchScriptModule& module,
     inputs.push_back(tensor);
   }
   LOG(INFO) << "start forword...";
-  auto output = module.forward(inputs).toTensor();
-  LOG(INFO) << "forword over, output_tensor[0]: " << output.slice(1, 0, 5);
-  if (!torchTensorToProto(&output, &((*response->mutable_outputs())["output"]))) {
-    LOG(ERROR) << "torchTensorToProto error:";
-    return tensorflow::Status(tensorflow::error::INVALID_ARGUMENT,
-                                "torchTensorToProto error: ");
-  }
-  PrintProtoToString(*response);
-/*
-  auto outputs = module.forward(inputs).toTuple();
-  for (int i = 0; i < outputs->elements().size(); i++) {
-    torch::Tensor output = outputs->elements()[i].toTensor();
-    LOG(INFO) << "output_tensor[" << i << "]: " << output.slice(1, 0, 5);
+  auto ivalue = module.forward(inputs);
+  /* only support toTensor() and toTuple() for now */
+  if (ivalue.isTensor()){
+    auto output = ivalue.toTensor();
     if (!torchTensorToProto(&output, &((*response->mutable_outputs())["output"]))) {
       LOG(ERROR) << "torchTensorToProto error:";
       return tensorflow::Status(tensorflow::error::INVALID_ARGUMENT,
-                                "torchTensorToProto error: ");
+                                  "torchTensorToProto error: ");
     }
-  }*/
+  }else if (ivalue.isTuple()){
+    auto outputs = ivalue.toTuple();
+    for (auto i=0; i < outputs->elements().size(); i++){
+      string name = "output" + i;
+      auto output = outputs->elements()[i].toTensor();
+      if (!torchTensorToProto(&output, &((*response->mutable_outputs())[name]))) {
+        LOG(ERROR) << "torchTensorToProto error:";
+        return tensorflow::Status(tensorflow::error::INVALID_ARGUMENT,
+                                    "torchTensorToProto error: ");
+      }
+    }
+  }else {
+    LOG(ERROR) << "ivalue::Tag error, not Tensor or Tuple";
+    return tensorflow::Status(tensorflow::error::INVALID_ARGUMENT,
+                                "ivalue::Tag error, only support toTensor() and toTuple() for now");
+  }
+  PrintProtoToString(*response);
   return Status::OK();
 }
 
