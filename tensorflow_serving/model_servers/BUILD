@@ -239,6 +239,7 @@ cc_library(
         "//tensorflow_serving/servables/tensorflow:get_model_metadata_impl",
         "//tensorflow_serving/servables/tensorflow:multi_inference_helper",
         "//tensorflow_serving/servables/tensorflow:predict_impl",
+        "//tensorflow_serving/servables/torch:torch_predict_impl",
         "//tensorflow_serving/servables/tensorflow:regression_service",
         "@grpc//:grpc++",
         "@org_tensorflow//tensorflow/core:lib",
@@ -292,6 +293,7 @@ cc_library(
         "//tensorflow_serving/servables/tensorflow:classification_service",
         "//tensorflow_serving/servables/tensorflow:get_model_metadata_impl",
         "//tensorflow_serving/servables/tensorflow:predict_impl",
+        "//tensorflow_serving/servables/torch:torch_predict_impl",
         "//tensorflow_serving/servables/tensorflow:regression_service",
         "//tensorflow_serving/util:json_tensor",
         "@com_google_absl//absl/strings",
@@ -320,6 +322,7 @@ TENSORFLOW_DEPS = [
     "//tensorflow_serving/servables/tensorflow:session_bundle_source_adapter",
     "//tensorflow_serving/servables/torch:torch_source_adapter",
     "//tensorflow_serving/servables/tensorflow:predict_impl",
+    "//tensorflow_serving/servables/torch:torch_predict_impl",
 ]
 
 cc_library(

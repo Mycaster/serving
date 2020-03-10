@@ -77,6 +77,8 @@ Status SavedModelBundleFactory::EstimateResourceRequirement(
 
 Status SavedModelBundleFactory::CreateSavedModelBundle(
     const string& path, std::unique_ptr<SavedModelBundle>* bundle) {
+  LOG(INFO) << __FUNCTION__ << " path: " << path;
+  
   bundle->reset(new SavedModelBundle);
   std::unordered_set<string> saved_model_tags(
       config_.saved_model_tags().begin(), config_.saved_model_tags().end());

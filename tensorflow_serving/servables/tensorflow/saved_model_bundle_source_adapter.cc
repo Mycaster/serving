@@ -52,6 +52,7 @@ Status SavedModelBundleSourceAdapter::Convert(const StoragePath& path,
   std::shared_ptr<SavedModelBundleFactory> bundle_factory = bundle_factory_;
   auto servable_creator = [bundle_factory,
                            path](std::unique_ptr<SavedModelBundle>* bundle) {
+    LOG(INFO) << "servable_creator from path:" << path;
     TF_RETURN_IF_ERROR(bundle_factory->CreateSavedModelBundle(path, bundle));
     if (bundle_factory->config().enable_model_warmup()) {
       return RunSavedModelWarmup(

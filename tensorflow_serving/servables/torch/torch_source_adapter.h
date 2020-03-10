@@ -16,6 +16,8 @@ limitations under the License.
 #ifndef TENSORFLOW_SERVING_SERVABLES_TORCH_TORCH_SOURCE_ADAPTER_H_
 #define TENSORFLOW_SERVING_SERVABLES_TORCH_TORCH_SOURCE_ADAPTER_H_
 
+#include "torch/script.h"
+
 #include "tensorflow_serving/core/simple_loader.h"
 #include "tensorflow_serving/core/source_adapter.h"
 #include "tensorflow_serving/core/storage_path.h"
@@ -23,6 +25,18 @@ limitations under the License.
 
 namespace tensorflow {
 namespace serving {
+
+using TorchScriptModule = torch::jit::script::Module;
+class TorchScriptModuleBundle {
+public:
+  explicit TorchScriptModuleBundle(TorchScriptModule &module)
+      : module_(module){};
+  ~TorchScriptModuleBundle(){};
+  //TorchScriptModule get(){ return module_};
+
+//private:
+  TorchScriptModule module_;
+};
 
 class TorchSourceAdapter final
     : public UnarySourceAdapter<StoragePath, std::unique_ptr<Loader>> {

@@ -38,14 +38,18 @@ int DeadlineToTimeoutMillis(const gpr_timespec deadline) {
 ::grpc::Status PredictionServiceImpl::Predict(::grpc::ServerContext *context,
                                               const PredictRequest *request,
                                               PredictResponse *response) {
+  LOG(INFO) << "predict with " << predict_platform_;
   tensorflow::RunOptions run_options = tensorflow::RunOptions();
   if (enforce_session_run_timeout_) {
     run_options.set_timeout_in_ms(
-        DeadlineToTimeoutMillis(context->raw_deadline()));
+      DeadlineToTimeoutMillis(context->raw_deadline()));
   }
-
-  const ::grpc::Status status =
-      ToGRPCStatus(predictor_->Predict(run_options, core_, *request, response));
+  ::grpc::Status status;
+  if (predict_platform_ == kPytorchModelPlatform){
+    status = ToGRPCStatus(torch_predictor_->Predict(core_, *request, response));
+  } else {
+    status = ToGRPCStatus(predictor_->Predict(run_options, core_, *request, response));
+  }
 
   if (!status.ok()) {
     VLOG(1) << "Predict failed: " << status.error_message();

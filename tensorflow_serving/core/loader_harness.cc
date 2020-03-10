@@ -68,6 +68,7 @@ Status LoaderHarness::LoadApproved() {
 }
 
 Status LoaderHarness::Load() {
+  LOG(INFO) << __FUNCTION__ ;
   {
     mutex_lock l(mu_);
     TF_RETURN_IF_ERROR(TransitionState(State::kLoadApproved, State::kLoading));
@@ -77,7 +78,8 @@ Status LoaderHarness::Load() {
   const Status status = Retry(
       strings::StrCat("Loading servable: ", id_.DebugString()),
       options_.max_num_load_retries, options_.load_retry_interval_micros,
-      [&]() { return loader_->Load(); }, [&]() { return cancel_load_retry(); });
+      [&]() { LOG(INFO) << "loader_->Load()"; return loader_->Load(); }, 
+      [&]() { return cancel_load_retry(); });
 
   {
     mutex_lock l(mu_);

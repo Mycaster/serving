@@ -19,10 +19,7 @@ int main(int argc, const char* argv[]) {
     std::cerr << "error loading the model\n";
     return -1;
   }
-
-  std::cout << "ok\n";
   LOG(INFO) << "OK"; 
-  VLOG(0) << "OK"; 
 
   std::vector<torch::jit::IValue> inputs;
   inputs.push_back(torch::ones({1, 3, 224, 224}));

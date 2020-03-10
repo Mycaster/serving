@@ -162,6 +162,7 @@ inline string ServableRequest::DebugString() const {
 template <typename T>
 Status Manager::GetServableHandle(const ServableRequest& request,
                                   ServableHandle<T>* const handle) {
+  LOG(INFO) << __FUNCTION__;  
   std::unique_ptr<UntypedServableHandle> untyped_handle;
   TF_RETURN_IF_ERROR(GetUntypedServableHandle(request, &untyped_handle));
   if (untyped_handle == nullptr) {
