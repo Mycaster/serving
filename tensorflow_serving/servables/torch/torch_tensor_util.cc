@@ -11,10 +11,10 @@ struct SerilazeHelper {
   template<typename Source>
   static T* DecodeFromRawContent(const Source& in, int64 n){
     if (in.size() != sizeof(T) * n) {
-      // LogUnexpectedSize(in.size(), sizeof(T) * n);
       LOG(ERROR) << "LogUnexpectedSize: " << in.size() << " , " << sizeof(T) * n;
       return nullptr;
     }
+    CHECK_GT(n, 0);
     T* out = new T[n];
     if (out == nullptr) {
       LOG(ERROR) << "allocate memory error";
@@ -132,6 +132,13 @@ void EncodeToProtoField(const T* data, int64 n, TensorProto* out) {
   ProtoSerializeHelper<T>::Fill(data, n, out);
 }
 
+template <typename T>
+void deleter(void *data){
+  T*d = (T*)data;
+  delete []d;
+}
+
+
 bool tensorshapeFromProto(int64 *n, std::vector<int64_t> *shapeVec, 
                           const tensorflow::TensorShapeProto& proto){
   if (proto.dim_size() > 0){
@@ -175,8 +182,7 @@ bool torchTensorFromProto(torch::Tensor * tensor, const tensorflow::TensorProto 
     if (data == nullptr) return false;
     LOG(INFO) << "convert tensorProto ok";
   }
-  *tensor = torch::from_blob(data, shape, option);
-  LOG(INFO) << "tensor.numel: " << tensor->numel() << " size: " << tensor->sizes();
+  CASES_DECODE(dtype, *tensor = torch::from_blob(data, shape, deleter<T>, option));
   return true;
 }
 
